@@ -477,7 +477,7 @@ MEETING TRANSCRIPT:
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.8-flash",
             contents=prompt
         )
 
@@ -1239,7 +1239,7 @@ if "analysis" in st.session_state:
                     priority
                 )
 
-                st.markdown(
+               st.markdown(
     f"""<div class="action-card">
 <h3>Action {index}</h3>
 
