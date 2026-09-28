@@ -6,6 +6,7 @@
 import os
 import json
 import re
+import time
 import streamlit as st
 
 
@@ -474,7 +475,11 @@ MEETING TRANSCRIPT:
 
     try:
 
-        client = genai.Client(api_key=api_key)
+       client = genai.Client(api_key=api_key)
+
+for attempt in range(3):
+
+    try:
 
         response = client.models.generate_content(
             model="gemini-3.8-flash",
@@ -485,6 +490,28 @@ MEETING TRANSCRIPT:
             return None, "Gemini returned an empty response."
 
         result = response.text.strip()
+
+        break
+
+    except Exception as error:
+
+        error_message = str(error)
+
+        if (
+            "503" in error_message
+            or "UNAVAILABLE" in error_message
+        ):
+
+            if attempt < 2:
+                time.sleep(3 * (attempt + 1))
+                continue
+
+            return None, (
+                "Gemini is temporarily overloaded. "
+                "Please try again after a short wait."
+            )
+
+        return None, f"Gemini API error: {error_message}"
 
         # Remove Markdown code fences if Gemini adds them
         if result.startswith("```json"):
